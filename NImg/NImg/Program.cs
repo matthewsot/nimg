@@ -30,7 +30,7 @@ namespace NImg
 
             using (var originalImage = new Bitmap(file))
             {
-                using (var writer = new BinaryWriter(new FileStream(@"Output\image.img", FileMode.Create)))
+                using (var writer = new BinaryWriter(new FileStream(@"Output\image.data", FileMode.Create)))
                 {
                     using (var colorsWriter = new BinaryWriter(new FileStream(@"Output\colors.colors", FileMode.Create)))
                     {
@@ -139,12 +139,15 @@ namespace NImg
                 }
             }
 
-            ZipFile.CreateFromDirectory("Output", "output.aimg", CompressionLevel.Optimal, false);
+            if (File.Exists("output.nimg")) File.Delete("output.nimg");
+
+            ZipFile.CreateFromDirectory("Output", "output.nimg", CompressionLevel.Optimal, false);
 
             var originalSize = new FileInfo(file).Length;
-            var newSize = new FileInfo("output.aimg").Length;
+            var newSize = new FileInfo("output.nimg").Length;
+
             Console.WriteLine("Original Size: " + originalSize + " New Size: " + newSize);
-            Console.WriteLine("Reduction: " + ((newSize * (double)100) / originalSize) + "%");
+            Console.WriteLine("Reduction: " + ((double)100 - ((newSize * (double)100) / originalSize)) + "%");
 
             Console.ReadLine();
         }
