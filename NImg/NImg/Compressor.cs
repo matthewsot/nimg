@@ -227,12 +227,15 @@ namespace NImg
                 }
             }
 
-            if (File.Exists("output.nimg")) File.Delete("output.nimg");
+            var ext = file.Split('.').Last();
+            var saveAs = file.Replace("." + ext, ".nimg");
+            if (File.Exists(saveAs)) File.Delete(saveAs);
 
-            ZipFile.CreateFromDirectory("Output", "output.nimg", CompressionLevel.Optimal, false);
+            ZipFile.CreateFromDirectory("Output", saveAs, CompressionLevel.Optimal, false);
+            Directory.Delete("Output", true);
 
             var originalSize = new FileInfo(file).Length;
-            var newSize = new FileInfo("output.nimg").Length;
+            var newSize = new FileInfo(saveAs).Length;
 
             Console.WriteLine("Original Size: " + originalSize + " New Size: " + newSize);
             Console.WriteLine("Reduction: " + ((double)100 - ((newSize * (double)100) / originalSize)) + "%");
