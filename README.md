@@ -99,7 +99,7 @@ To compress ``image.png`` into ``image.nimg``:
 nimg.exe compress image.png
 ```
 
-To convert ``image.nimg`` back into (a lossy) ``image.png``:
+To convert ``image.nimg`` back into a PNG (which will be named ``image.png``):
 ```
 nimg.exe reconstruct image.nimg
 ```
