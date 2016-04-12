@@ -10,33 +10,33 @@ namespace NImg
 {
     static class Compressor
     {
-        public static void Compress()
+        public static void Compress(string file = @"Data\TrainingImages\train.png")
         {
-
-            var file = @"Data\TrainingImages\train.png";
             var files = new string[] { file };
 
             var inputPixels = 3;
+            var innerLayers = 1;
+            var neuronsPerLayer = 9;
 
             var trainingSets = Loader.LoadTrainingSets(files, inputPixels);
-
-            Network network = new Network(inputPixels * 3, 1, 9, 3);
+            
+            Network network = new Network(inputPixels * 3, innerLayers, neuronsPerLayer, 3);
+            var biasNeurons = 1;
             network.AddBiasNeuron(0);
 
             Optimizer.Optimize(network, inputPixels, trainingSets);
 
             var tolerance = 10;
 
-            Writer.WriteWeights(network);
+            Writer.WriteWeights(network, inputPixels, innerLayers, neuronsPerLayer, biasNeurons);
 
             using (var originalImage = new Bitmap(file))
             {
                 using (var writer = new BinaryWriter(new FileStream(@"Output\image.data", FileMode.Create)))
                 {
-                    using (var colorsWriter = new BinaryWriter(new FileStream(@"Output\colors.colors", FileMode.Create)))
+                    using (var colorsWriter = new BinaryWriter(new FileStream(@"Output\colors.list", FileMode.Create)))
                     {
                         var colors = new List<int[]>();
-                        writer.Write(Convert.ToByte(inputPixels)); //Assuming inputPixels < 256
                         writer.Write(originalImage.Width);
                         writer.Write(originalImage.Height);
 
@@ -101,10 +101,10 @@ namespace NImg
                                     {
                                         writer.Write(Convert.ToByte(colors.IndexOf(existing)));
                                     }
-                                    else if (colors.Count >= 256)
+                                    else if (colors.Count >= 239) //Over 239 the byte starts with "1111", which is interpreted as a "Use AI" byte
                                     {
-                                        writer.Write(Convert.ToByte(255));
-                                        Console.WriteLine("Hit 256 colors");
+                                        writer.Write(Convert.ToByte(239));
+                                        Console.WriteLine("Hit 239 colors");
                                     }
                                     else
                                     {
