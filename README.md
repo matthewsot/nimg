@@ -48,8 +48,8 @@ All in all:
 
 There are a few things contributing to the size reduction:
 
-- There's no metadata, so NIMG gets to cheat a little bit. The .nimg format is currently very sparse, so 100% of the file size is going towards encoing the image.
-- The actual .nimg file is very lossy when compared to the original (see the "Drawbacks" section), though it's worth noting that even compared to the exact same JPG and PNG files (aka no loss), the NIMG file is consistently smaller.
+- There's no metadata, so NIMG gets to cheat a little bit. The ``.nimg`` format is currently very sparse, so 100% of the file size is going towards encoing the image.
+- The actual ``.nimg`` file is very lossy when compared to the original (see the "Drawbacks" section), though it's worth noting that even compared to the exact same JPG and PNG files (aka no loss), the NIMG file is consistently smaller.
 - It comes bundled with a neural network that took ~2 minutes to train on an i7-4790k. That's partly because the neural network code I used is inefficient, but it's also a built-in issue with the format.
 
 # Why is it so bad?
