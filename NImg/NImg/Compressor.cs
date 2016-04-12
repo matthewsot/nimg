@@ -17,8 +17,47 @@ namespace NImg
 
             var inputPixels = 3;
             var innerLayers = 2;
-            var neuronsPerLayer = 3;
+            var neuronsPerLayer = 5;
             var colorIndexBytes = 2; // Currently only supporting 0-2 here
+            var writeTolerance = 10;
+            var colorIndexTolerance = 5;
+            var trainingRounds = 5;
+
+            if (File.Exists("nimg.config"))
+            {
+                using (var reader = new StreamReader("nimg.config"))
+                {
+                    while (reader.Peek() > -1)
+                    {
+                        var line = reader.ReadLine();
+                        var parts = line.Split(' ');
+                        switch (parts[0])
+                        {
+                            case "inputPixels":
+                                inputPixels = int.Parse(parts[1]);
+                                break;
+                            case "innerLayers":
+                                innerLayers = int.Parse(parts[1]);
+                                break;
+                            case "neuronsPerLayer":
+                                neuronsPerLayer = int.Parse(parts[1]);
+                                break;
+                            case "colorIndexBytes":
+                                colorIndexBytes = int.Parse(parts[1]);
+                                break;
+                            case "writeTolerance":
+                                writeTolerance = int.Parse(parts[1]);
+                                break;
+                            case "colorIndexTolerance":
+                                colorIndexTolerance = int.Parse(parts[1]);
+                                break;
+                            case "trainingRounds":
+                                trainingRounds = int.Parse(parts[1]);
+                                break;
+                        }
+                    }
+                }
+            }
 
             var trainingSets = Loader.LoadTrainingSets(files, inputPixels);
             
@@ -26,9 +65,7 @@ namespace NImg
             var biasNeurons = 1;
             network.AddBiasNeuron(0);
 
-            Optimizer.Optimize(network, inputPixels, trainingSets);
-
-            var tolerance = 10;
+            Optimizer.Optimize(network, inputPixels, trainingSets, trainingRounds);
 
             Writer.WriteWeights(network, inputPixels, innerLayers, neuronsPerLayer, biasNeurons);
 
@@ -65,7 +102,7 @@ namespace NImg
                                 var good = true;
                                 for (var i = 0; i < 3; i++)
                                 {
-                                    if (Math.Abs(actualColors[i] - output[i]) < tolerance)
+                                    if (Math.Abs(actualColors[i] - output[i]) < writeTolerance)
                                     {
                                         hits++;
                                         toUse[i] = output[i];
@@ -96,12 +133,10 @@ namespace NImg
                                     if (colorIndexBytes > 0)
                                     {
                                         // find the color
-                                        var colorTolerance = (colorIndexBytes == 1 ? 12 : 3); // Needs to be edited for different images
-
                                         var existing = colors.FirstOrDefault(color =>
-                                            Math.Abs(roundedToUse[0] - color[0]) < colorTolerance &&
-                                            Math.Abs(roundedToUse[1] - color[1]) < colorTolerance &&
-                                            Math.Abs(roundedToUse[2] - color[2]) < colorTolerance);
+                                            Math.Abs(roundedToUse[0] - color[0]) < colorIndexTolerance &&
+                                            Math.Abs(roundedToUse[1] - color[1]) < colorIndexTolerance &&
+                                            Math.Abs(roundedToUse[2] - color[2]) < colorIndexTolerance);
 
                                         var maxColorIndex = (colorIndexBytes == 1 ? 239 : 61440);
 

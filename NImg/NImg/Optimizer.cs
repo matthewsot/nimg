@@ -8,7 +8,7 @@ namespace NImg
 {
     static class Optimizer
     {
-        public static void Optimize(Network network, int inputPixels, TrainingSet[] trainingSets)
+        public static void Optimize(Network network, int inputPixels, TrainingSet[] trainingSets, int trainingRounds)
         {
             var weightsPath = "weights." + inputPixels + ".json"; // Disabled for now
             if (false && File.Exists(weightsPath))
@@ -33,7 +33,7 @@ namespace NImg
                     error = newError;
                     Console.WriteLine("Error from last optimization attempt: " + error);
                     tries++;
-                } while (error > 1 && tries < 10 /*false || error > 10 || deltaDrop < 1*/);
+                } while (error > 1 && tries < trainingRounds /*false || error > 10 || deltaDrop < 1*/);
 
                 Console.WriteLine("Optimization complete!");
                 using (var writer = new StreamWriter(weightsPath))
