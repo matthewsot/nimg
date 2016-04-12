@@ -33,7 +33,7 @@ namespace NImg
                     error = newError;
                     Console.WriteLine("Error from last optimization attempt: " + error);
                     tries++;
-                } while (error > 1 && tries < trainingRounds /*false || error > 10 || deltaDrop < 1*/);
+                } while (tries < trainingRounds /*false || error > 10 || deltaDrop < 1*/);
 
                 Console.WriteLine("Optimization complete!");
                 using (var writer = new StreamWriter(weightsPath))
