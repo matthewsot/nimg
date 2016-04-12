@@ -22,6 +22,6 @@ Compressed into an .nimg file of **1,422 bytes**. After reconstructing the .nimg
 
 ![Reconstructed PNG image](Images/reconstructed.png "Reconstructed NIMG image")
 
-**1,422 bytes**
+**1,417 bytes**
 
-That's a **98.6% reduction** from the original PNG and **97.3%% reduction** from the compressed JPEG.
+That's a **98.6% reduction** from the original PNG and **97.3% reduction** from the compressed JPEG.
