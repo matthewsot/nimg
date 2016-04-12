@@ -16,8 +16,9 @@ namespace NImg
             var files = new string[] { file };
 
             var inputPixels = 3;
-            var innerLayers = 1;
-            var neuronsPerLayer = 9;
+            var innerLayers = 2;
+            var neuronsPerLayer = 3;
+            var colorIndexBytes = 2; // Currently only supporting 0-2 here
 
             var trainingSets = Loader.LoadTrainingSets(files, inputPixels);
             
@@ -40,6 +41,7 @@ namespace NImg
                         var colors = new List<int[]>();
                         writer.Write(originalImage.Width);
                         writer.Write(originalImage.Height);
+                        writer.Write(Convert.ToByte(colorIndexBytes));
 
                         var reconstructedImage = new Bitmap(originalImage.Width, originalImage.Height);
                         var hits = 0;
@@ -91,31 +93,82 @@ namespace NImg
                                         inARow = 0;
                                     }
 
-                                    // find the color
-                                    var colorTolerance = 12; // Needs to be edited for different images
-
-                                    var existing = colors.FirstOrDefault(color =>
-                                        Math.Abs(roundedToUse[0] - color[0]) < colorTolerance &&
-                                        Math.Abs(roundedToUse[1] - color[1]) < colorTolerance &&
-                                        Math.Abs(roundedToUse[2] - color[2]) < colorTolerance);
-
-                                    if (existing != null)
+                                    if (colorIndexBytes > 0)
                                     {
-                                        writer.Write(Convert.ToByte(colors.IndexOf(existing)));
-                                    }
-                                    else if (colors.Count >= 239) //Over 239 the byte starts with "1111", which is interpreted as a "Use AI" byte
-                                    {
-                                        writer.Write(Convert.ToByte(239));
-                                        Console.WriteLine("Hit 239 colors");
+                                        // find the color
+                                        var colorTolerance = (colorIndexBytes == 1 ? 12 : 3); // Needs to be edited for different images
+
+                                        var existing = colors.FirstOrDefault(color =>
+                                            Math.Abs(roundedToUse[0] - color[0]) < colorTolerance &&
+                                            Math.Abs(roundedToUse[1] - color[1]) < colorTolerance &&
+                                            Math.Abs(roundedToUse[2] - color[2]) < colorTolerance);
+
+                                        var maxColorIndex = (colorIndexBytes == 1 ? 239 : 61440);
+
+                                        if (existing != null)
+                                        {
+                                            var index = colors.IndexOf(existing);
+                                            switch (colorIndexBytes)
+                                            {
+                                                case 1:
+                                                    writer.Write(Convert.ToByte(index));
+                                                    break;
+                                                case 2:
+                                                    var bytesStr = Convert.ToString(index, 2).PadLeft(16, '0');
+                                                    writer.Write(Convert.ToByte(bytesStr.Substring(0, 8), 2));
+                                                    writer.Write(Convert.ToByte(bytesStr.Substring(8), 2));
+                                                    break;
+                                            }
+                                        }
+                                        else if (colors.Count >= maxColorIndex) //Over 239/61440 the byte starts with "1111", which is interpreted as a "Use AI" byte
+                                        {
+                                            Console.WriteLine("Hit max colors");
+                                            switch (colorIndexBytes)
+                                            {
+                                                case 1:
+                                                    writer.Write(Convert.ToByte(maxColorIndex - 1));
+                                                    break;
+                                                case 2:
+                                                    var bytesStr = Convert.ToString(maxColorIndex - 1, 2);
+                                                    writer.Write(Convert.ToByte(bytesStr.Substring(0, 8), 2));
+                                                    writer.Write(Convert.ToByte(bytesStr.Substring(8), 2));
+                                                    break;
+                                            }
+                                        }
+                                        else
+                                        {
+                                            colors.Add(roundedToUse);
+                                            colorsWriter.Write(Convert.ToByte(roundedToUse[0]));
+                                            colorsWriter.Write(Convert.ToByte(roundedToUse[1]));
+                                            colorsWriter.Write(Convert.ToByte(roundedToUse[2]));
+
+                                            switch (colorIndexBytes)
+                                            {
+                                                case 1:
+                                                    writer.Write(Convert.ToByte(colors.Count() - 1));
+                                                    break;
+                                                case 2:
+                                                    var byteStr = Convert.ToString(colors.Count() - 1, 2).PadLeft(16, '0');
+                                                    writer.Write(Convert.ToByte(byteStr.Substring(0, 8), 2));
+                                                    writer.Write(Convert.ToByte(byteStr.Substring(8), 2));
+                                                    break;
+                                            }
+                                        }
                                     }
                                     else
                                     {
-                                        colors.Add(roundedToUse);
-                                        colorsWriter.Write(Convert.ToByte(roundedToUse[0]));
-                                        colorsWriter.Write(Convert.ToByte(roundedToUse[1]));
-                                        colorsWriter.Write(Convert.ToByte(roundedToUse[2]));
+                                        var RStr = Convert.ToString(roundedToUse[0], 2);
+                                        var GStr = Convert.ToString(roundedToUse[1], 2);
+                                        var BStr = Convert.ToString(roundedToUse[2], 2);
 
-                                        writer.Write(Convert.ToByte((colors.Count() - 1)));
+                                        //TODO: handle 11111111
+                                        if (RStr.StartsWith("1111")) RStr = RStr.Replace("1111", "1110");
+                                        if (GStr.StartsWith("1111")) GStr = GStr.Replace("1111", "1110");
+                                        if (BStr.StartsWith("1111")) BStr = BStr.Replace("1111", "1110");
+
+                                        writer.Write(Convert.ToByte(RStr, 2));
+                                        writer.Write(Convert.ToByte(GStr, 2));
+                                        writer.Write(Convert.ToByte(BStr, 2));
                                     }
                                 }
 

@@ -66,6 +66,7 @@ namespace NImg
             {
                 var width = reader.ReadInt32();
                 var height = reader.ReadInt32();
+                var colorIndexBytes = Convert.ToInt32(reader.ReadByte());
 
                 using (var reconstructedImage = new Bitmap(width, height))
                 {
@@ -74,10 +75,10 @@ namespace NImg
                         var input = new double[inputPixels * 3];
                         for (var xPixel = 0; xPixel < width; xPixel++)
                         {
-                            var strByte = Convert.ToString(reader.ReadByte(), 2).PadLeft(8, '0');
-                            if (strByte.StartsWith("1111"))
+                            var byteStr = Convert.ToString(reader.ReadByte(), 2).PadLeft(8, '0');
+                            if (byteStr.StartsWith("1111"))
                             {
-                                var inARow = Convert.ToInt32(strByte.Substring(4).PadLeft(8, '0'), 2);
+                                var inARow = Convert.ToInt32(byteStr.Substring(4).PadLeft(8, '0'), 2);
                                 for (var i = 0; i < inARow; i++)
                                 {
                                     var output = network.Pulse(input);
@@ -103,15 +104,34 @@ namespace NImg
                             }
                             else
                             {
-                                var colorIndex = Convert.ToInt32(strByte, 2);
-                                reconstructedImage.SetPixel(xPixel, yPixel, colors[colorIndex]);
+                                Color colorToUse;
+                                if (colorIndexBytes == 0)
+                                {
+                                    colorToUse = Color.FromArgb(
+                                        Convert.ToInt32(byteStr, 2),
+                                        Convert.ToInt32(reader.ReadByte()),
+                                        Convert.ToInt32(reader.ReadByte())
+                                    );
+                                }
+                                else
+                                {
+                                    var colorIndex = Convert.ToInt32(byteStr, 2);
+                                    if (colorIndexBytes == 2)
+                                    {
+                                        var secondByteStr = Convert.ToString(reader.ReadByte(), 2).PadLeft(8, '0');
+                                        colorIndex = Convert.ToInt32(byteStr + secondByteStr, 2);
+                                    }
+                                    colorToUse = colors[colorIndex];
+                                }
+                                
+                                reconstructedImage.SetPixel(xPixel, yPixel, colorToUse);
                                 for (var j = 0; j < input.Length - 3; j++)
                                 {
                                     input[j] = input[j + 3];
                                 }
-                                input[input.Length - 3] = colors[colorIndex].R;
-                                input[input.Length - 2] = colors[colorIndex].G;
-                                input[input.Length - 1] = colors[colorIndex].B;
+                                input[input.Length - 3] = colorToUse.R;
+                                input[input.Length - 2] = colorToUse.G;
+                                input[input.Length - 1] = colorToUse.B;
                             }
                         }
                     }
