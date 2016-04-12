@@ -11,7 +11,7 @@ namespace NImg
         public static void Optimize(Network network, int inputPixels, TrainingSet[] trainingSets)
         {
             var weightsPath = "weights." + inputPixels + ".json"; // Disabled for now
-            if (false && File.Exists(weightsPath))
+            if (true && File.Exists(weightsPath))
             {
                 Console.WriteLine("Found existing weights!");
                 using (var reader = new StreamReader(weightsPath))

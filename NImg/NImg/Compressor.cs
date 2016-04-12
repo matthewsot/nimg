@@ -12,6 +12,7 @@ namespace NImg
     {
         public static void Compress(string file = @"Data\TrainingImages\train.png")
         {
+            Directory.CreateDirectory("Output");
             var files = new string[] { file };
 
             var inputPixels = 3;
@@ -58,7 +59,6 @@ namespace NImg
                                 var toUse = new double[3];
 
                                 var actualColors = new int[] { actualPixel.R, actualPixel.G, actualPixel.B };
-                                var roundedOutput = new int[] { (int)Math.Round(toUse[0]), (int)Math.Round(toUse[1]), (int)Math.Round(toUse[2]) };
 
                                 var good = true;
                                 for (var i = 0; i < 3; i++)
@@ -75,8 +75,9 @@ namespace NImg
                                         toUse[i] = actualColors[i];
                                     }
                                 }
+                                var roundedToUse = new int[] { (int)Math.Round(toUse[0]), (int)Math.Round(toUse[1]), (int)Math.Round(toUse[2]) };
 
-                                if (good && inARow < 16)
+                                if (good && inARow < 16 && xPixel != originalImage.Width - 1) //TODO: double check this
                                 {
                                     inARow++;
                                 }
@@ -91,11 +92,12 @@ namespace NImg
                                     }
 
                                     // find the color
-                                    var colorTolerance = 3;
+                                    var colorTolerance = 12; // Needs to be edited for different images
+
                                     var existing = colors.FirstOrDefault(color =>
-                                        Math.Abs(roundedOutput[0] - color[0]) < colorTolerance &&
-                                        Math.Abs(roundedOutput[0] - color[0]) < colorTolerance &&
-                                        Math.Abs(roundedOutput[0] - color[0]) < colorTolerance);
+                                        Math.Abs(roundedToUse[0] - color[0]) < colorTolerance &&
+                                        Math.Abs(roundedToUse[1] - color[1]) < colorTolerance &&
+                                        Math.Abs(roundedToUse[2] - color[2]) < colorTolerance);
 
                                     if (existing != null)
                                     {
@@ -108,12 +110,10 @@ namespace NImg
                                     }
                                     else
                                     {
-                                        colors.Add(roundedOutput);
-                                        colorsWriter.Write(Convert.ToByte(roundedOutput[0]));
-                                        colorsWriter.Write(Convert.ToByte(roundedOutput[1]));
-                                        colorsWriter.Write(Convert.ToByte(roundedOutput[2]));
-
-                                        colorsWriter.Flush();
+                                        colors.Add(roundedToUse);
+                                        colorsWriter.Write(Convert.ToByte(roundedToUse[0]));
+                                        colorsWriter.Write(Convert.ToByte(roundedToUse[1]));
+                                        colorsWriter.Write(Convert.ToByte(roundedToUse[2]));
 
                                         writer.Write(Convert.ToByte((colors.Count() - 1)));
                                     }
