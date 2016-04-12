@@ -24,7 +24,7 @@ namespace NImg
 
             Optimizer.Optimize(network, inputPixels, trainingSets);
 
-            var tolerance = 25;
+            var tolerance = 10;
 
             Writer.WriteWeights(network);
 
