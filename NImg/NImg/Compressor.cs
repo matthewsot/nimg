@@ -22,6 +22,7 @@ namespace NImg
             var writeTolerance = 10;
             var colorIndexTolerance = 5;
             var trainingRounds = 5;
+            var maxTrainingSets = -1;
 
             if (File.Exists("nimg.config"))
             {
@@ -54,12 +55,15 @@ namespace NImg
                             case "trainingRounds":
                                 trainingRounds = int.Parse(parts[1]);
                                 break;
+                            case "maxTrainingSets":
+                                maxTrainingSets = int.Parse(parts[1]);
+                                break;
                         }
                     }
                 }
             }
 
-            var trainingSets = Loader.LoadTrainingSets(files, inputPixels);
+            var trainingSets = Loader.LoadTrainingSets(files, inputPixels, maxTrainingSets);
             
             Network network = new Network(inputPixels * 3, innerLayers, neuronsPerLayer, 3);
             var biasNeurons = 1;
@@ -70,7 +74,7 @@ namespace NImg
             Writer.WriteWeights(network, inputPixels, innerLayers, neuronsPerLayer, biasNeurons);
 
             using (var originalImage = new Bitmap(file))
-            {
+            { 
                 using (var writer = new BinaryWriter(new FileStream(@"Output\image.data", FileMode.Create)))
                 {
                     using (var colorsWriter = new BinaryWriter(new FileStream(@"Output\colors.list", FileMode.Create)))
@@ -239,8 +243,6 @@ namespace NImg
 
             Console.WriteLine("Original Size: " + originalSize + " New Size: " + newSize);
             Console.WriteLine("Reduction: " + ((double)100 - ((newSize * (double)100) / originalSize)) + "%");
-
-            Console.ReadLine();
         }
     }
 }

@@ -26,12 +26,14 @@ namespace NImg
                 int tries = 0;
                 do
                 {
-                    Console.WriteLine("Optimizing...");
                     network.Weights = BackPropOptimizer.Optimize(network, trainingSets, 0.5, 1);
                     var newError = BackPropOptimizer.Error(network, trainingSets, network.Weights);
                     deltaDrop = error - newError;
                     error = newError;
-                    Console.WriteLine("Error from last optimization attempt: " + error);
+                    if (tries % 10 == 0)
+                    {
+                        Console.WriteLine("Error from last optimization attempt: " + error);
+                    }
                     tries++;
                 } while (tries < trainingRounds /*false || error > 10 || deltaDrop < 1*/);
 

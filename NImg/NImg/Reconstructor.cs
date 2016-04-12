@@ -9,7 +9,7 @@ namespace NImg
 {
     static class Reconstructor
     {
-        public static void Reconstruct(string path)
+        public static void Reconstruct(string path, bool demoMode)
         {
             var folderPath = path.Replace(".nimg", ".nimg-temp");
             if (Directory.Exists(folderPath)) Directory.Delete(folderPath, true);
@@ -81,6 +81,14 @@ namespace NImg
                                 var inARow = Convert.ToInt32(byteStr.Substring(4).PadLeft(8, '0'), 2);
                                 for (var i = 0; i < inARow; i++)
                                 {
+                                    if (demoMode)
+                                    {
+                                        reconstructedImage.SetPixel(xPixel, yPixel,
+                                            Color.FromArgb(255, 0, 0));
+                                        xPixel++;
+                                        continue;
+                                    }
+
                                     var output = network.Pulse(input);
                                     var roundedOutput = new int[] {
                                             (int)Math.Round(output[0] * 255),
@@ -129,13 +137,13 @@ namespace NImg
                                 {
                                     input[j] = input[j + 3];
                                 }
-                                input[input.Length - 3] = colorToUse.R;
-                                input[input.Length - 2] = colorToUse.G;
-                                input[input.Length - 1] = colorToUse.B;
+                                input[input.Length - 3] = (double)colorToUse.R / 255;
+                                input[input.Length - 2] = (double)colorToUse.G / 255;
+                                input[input.Length - 1] = (double)colorToUse.B / 255;
                             }
                         }
                     }
-                    reconstructedImage.Save(path.Replace(".nimg", ".png"), System.Drawing.Imaging.ImageFormat.Png);
+                    reconstructedImage.Save(path.Replace(".nimg", ".reconstructed.png"), System.Drawing.Imaging.ImageFormat.Png);
                 }
             }
             Directory.Delete(folderPath, true);
