@@ -92,7 +92,7 @@ colorIndexTolerance [ The maximum difference between the pixel color and the col
 trainingRounds [ The number of rounds to train the network for. Lower = higher file size, quicker ]
 ```
 
-See above for an example ``nimg.config``. Any lines may be left and will be filled in with default values.
+See above for an example ``nimg.config``. Any lines may be removed and will be filled in with default values.
 
 To compress ``image.png`` into ``image.nimg``:
 ```
