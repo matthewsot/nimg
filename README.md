@@ -33,9 +33,9 @@ Compressed into an NIMG file of **50,040 bytes**. The ``.nimg`` file (after bein
 
 **50,040 bytes**
 
-Note that because NIMG is so lossy (see the "Drawbacks" section), the recreated file is **not** the same as the original PNG.
+Note that because NIMG is so lossy (see the "Drawbacks" section), the recreated file is **not** the same as the original PNG. NIMG has an option to recreate the NIMG file into a PNG, which is exactly the same image as the compressed NIMG file.
 
-The reconstructed ``.nimg`` file, when saved as a PNG, has a file size of **61,040 bytes**.
+The reconstructed ``.nimg`` file (exactly the same image as the ``.nimg``), when saved as a PNG, has a file size of **61,040 bytes**.
 Saving that PNG file as a JPEG in Paint.net creates a ``.jpg`` with file size 57,691 bytes, **57,565 bytes** after zip-compressing in Windows.
 
 All in all:
