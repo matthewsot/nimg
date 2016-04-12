@@ -64,11 +64,10 @@ There are a few things contributing to the size reduction:
 First and foremost, NIMG requires that you train a neural network on the image file before compression. This can take anywhere between 20 seconds and a day, depending on the level of compression desired and the resolution of the file.
 
 On top of that, the NIMG file format takes quite a few shortcuts to arrive at a small file size. A few of those:
-- By default NIMG uses a color dictionary, which treats all colors within a certain tolerance interval as a single color. Generally this won't get in the way (the demo Bliss image above has a tolerance of just 5 R/G/B units), but for complex images you might need to disable the color dictionary by setting colorIndexBytes to 0
+- By default NIMG uses a color dictionary, which treats all colors within a certain tolerance interval as a single color. Generally this won't get in the way (the demo Bliss image above has a tolerance of just 5 R/G/B units), but for complex images you might need to disable the color dictionary by setting ``colorIndexBytes`` to 0
 - The color dictionary's bytes are limited to either 239 or 61440 colors, and a higher limit leads to an almost 2x file size. Again, if you need complex colors you should disable the color dictionary, though that significantly impacts file size.
 - NIMG is inherently lossy. Setting both tolerances in ``nimg.config`` to 1 will make the file practically lossless, but it is highly unlikely that the network will output exactly the right 3 values for any of the pixels, basically making NIMG useless.
-- Image dimensions are limited to 2^32 x 2^32, though that's probably not going to be a huge problem for practical images
-- And more, check out Compressor.cs for a better idea of the shortcuts taken
+- And more, check out ``Compressor.cs`` for a better idea of the shortcuts taken
 
 # What's the use case for this?
 
