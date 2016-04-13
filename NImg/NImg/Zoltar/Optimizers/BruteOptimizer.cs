@@ -4,7 +4,7 @@ namespace Zoltar
 {
     static class BruteOptimizer
     {
-        static Random Random = new Random(123);
+        public static Random Random = new Random(123);
         public static double Error(this Network network, TrainingSet trainingSet, double[][][] weights)
         {
             var outputs = network.Pulse(trainingSet.Inputs, weights);
