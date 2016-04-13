@@ -6,13 +6,13 @@ Uses the limited, slow, and inefficient (but super simple and easy-to-use!) feed
 # Show me the numbers
 Original PNG image, **106,638 bytes** uncompressed and 106,795 bytes when compressed with the default Windows "send-to" compression:
 
-![Original PNG image](Images/original.png "Original PNG image")
+![Original PNG image](Images/bliss.png "Original PNG image")
 
 **106,638 bytes**
 
 Original image saved as a JPEG in Paint.net, 53,185 bytes as ``.jpg``, **53,067 bytes** after compressed to ``.zip``:
 
-![Original JPEG image](Images/original.jpg "Original JPEG image")
+![Original JPEG image](Images/bliss.jpg "Original JPEG image")
 
 **53,067 bytes**
 
@@ -22,27 +22,28 @@ inputPixels 3
 innerLayers 2
 neuronsPerLayer 3
 colorIndexBytes 2
-writeTolerance 10
+writeTolerance 8
 colorIndexTolerance 5
-trainingRounds 25
+trainingRounds 50000
+maxTrainingSets 20
 ```
 
-Compressed into an NIMG file of **50,040 bytes**. The ``.nimg`` file (after being converted losslessly to a PNG):
+Compressed into an NIMG file of **48,874 bytes**. The ``.nimg`` file (after being converted losslessly to a PNG):
 
 ![Reconstructed NIMG image](Images/reconstructed.png "Reconstructed NIMG image")
 
-**50,040 bytes**
+**48,874 bytes**
 
 Note that because NIMG is so lossy (see the "Drawbacks" section), the recreated file is **not** the same as the original PNG. NIMG has an option to recreate the NIMG file into a PNG, which is exactly the same image as the compressed NIMG file.
 
-The reconstructed ``.nimg`` file (exactly the same image as the ``.nimg``), when saved as a PNG, has a file size of **61,040 bytes**.
-Saving that PNG file as a JPEG in Paint.net creates a ``.jpg`` with file size 57,691 bytes, **57,565 bytes** after zip-compressing in Windows.
+The reconstructed ``.nimg`` file (exactly the same image as the ``.nimg``), when saved as a PNG, has a file size of **62,683 bytes**.
+Saving that PNG file as a JPEG in Paint.net creates a ``.jpg`` with file size 58,137 bytes, **58,023 bytes** after zip-compressing in Windows.
 
 All in all:
-- **53.1% reduction** from the original PNG
-- **5.7% reduction** from the original JPG
-- **18% reduction** from the reconstructed image saved as a PNG
-- **13.1% reduction** from the reconstructed image saved as a compressed JPEG.
+- **54.2% reduction** from the original PNG
+- **7.9% reduction** from the original JPG
+- **22% reduction** from the reconstructed image saved as a PNG
+- **15.8% reduction** from the reconstructed image saved as a compressed JPEG.
 
 # Why is it so good?
 
@@ -90,16 +91,22 @@ colorIndexBytes [ 0 => Disable the color dictionary, 1 => maximum 239 distinct c
 writeTolerance [ The maximum difference between the predicted color and the actual color. Lower = large file size, less lossy ]
 colorIndexTolerance [ The maximum difference between the pixel color and the color stored in the dictionary. Lower = larger file size, less lossy ]
 trainingRounds [ The number of rounds to train the network for. Lower = higher file size, quicker ]
+maxTrainingSets [ The number of training sets to create. Lower = quicker, potentially better-fitted network ]
 ```
 
 See above for an example ``nimg.config``. Any lines may be removed and will be filled in with default values.
 
 To compress ``image.png`` into ``image.nimg``:
 ```
-nimg.exe compress image.png
+nimg compress image.png
 ```
 
-To convert ``image.nimg`` back into a PNG (which will be named ``image.png``):
+To convert ``image.nimg`` back into a PNG (which will be named ``image.reconstructed.png``):
 ```
-nimg.exe reconstruct image.nimg
+nimg reconstruct image.nimg
+```
+
+To convert ``image.nimg`` back into a PNG with the 'missing' pixels highlighted in red (as ``image.reconstructed.png``):
+```
+nimg reconstruct image.nimg demo
 ```
