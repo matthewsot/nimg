@@ -10,6 +10,7 @@ namespace NImg
             {
                 case "compress":
                     Compressor.Compress(args[1]);
+                    //Reconstructor.Reconstruct(args[1].Replace(".png", ".nimg"), true);
                     break;
                 case "reconstruct":
                     if (args.Length >= 3 && args[2] == "demo")
@@ -21,6 +22,7 @@ namespace NImg
                     Reconstructor.Reconstruct(args[1], false);
                     break;
             }
+            Console.WriteLine("Completed, press Enter to exit.");
             Console.ReadLine();
         }
     }

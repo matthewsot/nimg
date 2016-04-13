@@ -83,8 +83,7 @@ namespace NImg
                         writer.Write(originalImage.Width);
                         writer.Write(originalImage.Height);
                         writer.Write(Convert.ToByte(colorIndexBytes));
-
-                        var reconstructedImage = new Bitmap(originalImage.Width, originalImage.Height);
+                        
                         var hits = 0;
                         var misses = 0;
 
@@ -120,17 +119,27 @@ namespace NImg
                                 }
                                 var roundedToUse = new int[] { (int)Math.Round(toUse[0]), (int)Math.Round(toUse[1]), (int)Math.Round(toUse[2]) };
 
-                                if (good && inARow < 16 && xPixel != originalImage.Width - 1) //TODO: double check this
+                                if (good && inARow < 15 && xPixel < originalImage.Width - 1)
                                 {
                                     inARow++;
+                                }
+                                else if (good && (inARow == 15 || xPixel == originalImage.Width - 1))
+                                {
+                                    //NOTE: 11110000 -> inARow = 1, not 0, increase by 1
+                                    inARow++;
+                                    Console.WriteLine(inARow);
+                                    // "Use AI" bytes start are in the form 1111 + (number of pixels)
+                                    writer.Write(Convert.ToByte("1111" + Convert.ToString(inARow - 1, 2).PadLeft(4, '0'), 2));
+                                    inARow = 0;
                                 }
                                 else
                                 {
                                     if (inARow > 0)
                                     {
+                                        //NOTE: 11110000 -> inARow = 1, not 0, increase by 1
                                         Console.WriteLine(inARow);
                                         // "Use AI" bytes start are in the form 1111 + (number of pixels)
-                                        writer.Write(Convert.ToByte("1111" + Convert.ToString(inARow, 2).PadLeft(8, '0').Substring(4), 2));
+                                        writer.Write(Convert.ToByte("1111" + Convert.ToString(inARow - 1, 2).PadLeft(8, '0').Substring(4), 2));
                                         inARow = 0;
                                     }
 
@@ -218,15 +227,10 @@ namespace NImg
                                 input[input.Length - 3] = toUse[0] / 255;
                                 input[input.Length - 2] = toUse[1] / 255;
                                 input[input.Length - 1] = toUse[2] / 255;
-
-                                var colorToUse = Color.FromArgb((int)Math.Round(toUse[0]), (int)Math.Round(toUse[1]), (int)Math.Round(toUse[2]));
-                                reconstructedImage.SetPixel(xPixel, yPixel, colorToUse);
                             }
                         }
                         Console.WriteLine("Hits: " + hits + " Misses: " + misses);
                         Console.WriteLine((double)(((double)hits / (double)(hits + misses)) * 100) + "%");
-
-                        reconstructedImage.Save("reconstructed.png", System.Drawing.Imaging.ImageFormat.Png);
                     }
                 }
             }

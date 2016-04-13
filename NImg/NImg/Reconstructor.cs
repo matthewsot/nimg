@@ -78,7 +78,7 @@ namespace NImg
                             var byteStr = Convert.ToString(reader.ReadByte(), 2).PadLeft(8, '0');
                             if (byteStr.StartsWith("1111"))
                             {
-                                var inARow = Convert.ToInt32(byteStr.Substring(4).PadLeft(8, '0'), 2);
+                                var inARow = Convert.ToInt32(byteStr.Substring(4).PadLeft(8, '0'), 2) + 1; // 11110000 -> 1, not 0
                                 for (var i = 0; i < inARow; i++)
                                 {
                                     if (demoMode)
