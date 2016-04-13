@@ -7,7 +7,7 @@ namespace NImg
 {
     static class Loader
     {
-        public static TrainingSet[] LoadTrainingSets(string[] paths, int inputPixels = 3, int maxTrainingSets = -1)
+        public static TrainingSet[] LoadTrainingSets(string[] paths, int inputPixels = 3, int maxTrainingSets = -1, int trainingSetRandomization = 1)
         {
             var trainingSets = new List<TrainingSet>();
             foreach (var path in paths)
@@ -16,7 +16,7 @@ namespace NImg
                 using (var image = new Bitmap(path))
                 {
                     var sets = 0;
-                    if (maxTrainingSets != -1)
+                    if (maxTrainingSets != -1 && trainingSetRandomization == 1)
                     {
                         for (var i = 0; i < maxTrainingSets; i++)
                         {

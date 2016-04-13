@@ -23,6 +23,7 @@ namespace NImg
             var colorIndexTolerance = 5;
             var trainingRounds = 5;
             var maxTrainingSets = -1;
+            var trainingSetRandomization = 0;
 
             if (File.Exists("nimg.config"))
             {
@@ -58,12 +59,15 @@ namespace NImg
                             case "maxTrainingSets":
                                 maxTrainingSets = int.Parse(parts[1]);
                                 break;
+                            case "trainingSetRandomization":
+                                trainingSetRandomization = int.Parse(parts[1]);
+                                break;
                         }
                     }
                 }
             }
 
-            var trainingSets = Loader.LoadTrainingSets(files, inputPixels, maxTrainingSets);
+            var trainingSets = Loader.LoadTrainingSets(files, inputPixels, maxTrainingSets, trainingSetRandomization);
             
             Network network = new Network(inputPixels * 3, innerLayers, neuronsPerLayer, 3);
             var biasNeurons = 1;

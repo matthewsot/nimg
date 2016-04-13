@@ -26,6 +26,7 @@ writeTolerance 8
 colorIndexTolerance 5
 trainingRounds 50000
 maxTrainingSets 20
+trainingSetRandomization 0
 ```
 
 Compressed into an NIMG file of **48,874 bytes**. The ``.nimg`` file (after being converted losslessly to a PNG):
@@ -91,7 +92,8 @@ colorIndexBytes [ 0 => Disable the color dictionary, 1 => maximum 239 distinct c
 writeTolerance [ The maximum difference between the predicted color and the actual color. Lower = large file size, less lossy ]
 colorIndexTolerance [ The maximum difference between the pixel color and the color stored in the dictionary. Lower = larger file size, less lossy ]
 trainingRounds [ The number of rounds to train the network for. Lower = higher file size, quicker ]
-maxTrainingSets [ The number of training sets to create. Lower = quicker, potentially better-fitted network ]
+maxTrainingSets [ The number of training sets to create. 0 = Unlimited. Lower = quicker, potentially better-fitted network ]
+trainingSetRandomization [ If maxTrainingSets > 0: 0 -> pull sets sequentially from the top left of the image, 1 -> pull sets randomly from the image ]
 ```
 
 See above for an example ``nimg.config``. Any lines may be removed and will be filled in with default values.
