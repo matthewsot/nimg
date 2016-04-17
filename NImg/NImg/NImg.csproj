@@ -64,6 +64,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CompressionOptions.cs" />
     <Compile Include="Compressor.cs" />
     <Compile Include="Loader.cs" />
     <Compile Include="Optimizer.cs" />
