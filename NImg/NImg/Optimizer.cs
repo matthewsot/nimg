@@ -24,6 +24,7 @@ namespace NImg
                 double error = 0;
                 double deltaDrop = 0;
                 int tries = 0;
+                Console.WriteLine("Beginning Optimization");
                 do
                 {
                     network.Weights = BackPropOptimizer.Optimize(network, trainingSets, 0.5, 1);

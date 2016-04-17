@@ -1,4 +1,6 @@
-﻿namespace NImg
+﻿using System.Reflection;
+
+namespace NImg
 {
     public class CompressionOptions
     {
@@ -6,7 +8,7 @@
         {
             set
             {
-                this.GetType().GetProperty(property, System.Reflection.BindingFlags.IgnoreCase)?.SetValue(this, value, null);
+                this.GetType().GetProperty(property, BindingFlags.IgnoreCase | BindingFlags.Public | BindingFlags.Instance)?.SetValue(this, value, null);
             }
         }
 
