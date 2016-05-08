@@ -3,6 +3,8 @@ Extremely lossy image compression with neural networks
 
 Uses the limited, slow, and inefficient (but super simple and easy-to-use!) feed-forward neural network [Zoltar](https://github.com/matthewsot/zoltar).
 
+*Note:* While this technique does seem to work rather well for specific photos and with specific configurations, it's mostly meant as a proof of concept. The image compression algorithms that power most JPEG compression will probably give you a better result for most applications and images. Feel free to check this out though! Maybe you can make it even better :)
+
 # Show me the numbers
 Original PNG image, **106,638 bytes** uncompressed and 106,795 bytes when compressed with the default Windows "send-to" compression:
 
