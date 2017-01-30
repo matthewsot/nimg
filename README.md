@@ -3,6 +3,8 @@ Extremely lossy image compression with neural networks
 
 Uses the limited, slow, and inefficient (but super simple and easy-to-use!) feed-forward neural network [Zoltar](https://github.com/matthewsot/zoltar).
 
+*More important note:* There are much better ways of doing this, including with RNNs [as Google is doing](https://static.googleusercontent.com/media/research.google.com/en//pubs/archive/45534.pdf). This is a simple example using only  a FFN.
+
 *Note:* While this technique does seem to work rather well for specific photos and with specific configurations, it's mostly meant as a proof of concept. The image compression algorithms that power most JPEG compression will probably give you a better result for most applications and images. Feel free to check this out though! Maybe you can make it even better :)
 
 # Show me the numbers
